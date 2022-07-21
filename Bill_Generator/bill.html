@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>BiLL Generator</title>
+	<script src='jquery.js'></script>
+	<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css'
+		rel='stylesheet'>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js">
+	</script>
+
+	<style>
+		input,
+		label {
+			margin-left: 1%;
+		}
+
+		.creator {
+			padding-top: 5px;
+			padding-right: 5px;
+			padding-left: 5px;
+			font-size: 18px;
+		}
+	</style>
+	<script>
+		$(document).ready(function () {
+
+			var counter = 1;
+			var table_body = $("#bill_body");
+			var from = $("#from_name");
+			var vh_name = $("#vh_name");
+			var to = $("#to_name");
+			var challan = $("#challan_name");
+			var price = $("#price_name");
+			var weight = $("#wt_name");
+
+
+			$("#add").click(dothis);
+
+			$(document).on("keypress", function (e) {
+				if (e.which == 13) {
+					dothis();
+				}
+			});
+			// =============================== getting ready to send data to other page ================ 
+			$("#send").click(function () {
+				reid(); // ordering serial number for the last time
+				var from = $(".from").map(function () {
+					return String($(this).val());
+				}).get();
+
+				var vehicle_number = $(".vehicle_number").map(function () {
+					return $(this).val();
+				}).get();
+
+				var to = $(".to").map(function () {
+					return $(this).val();
+				}).get();
+
+				var challan = $(".challan").map(function () {
+					return $(this).val();
+				}).get();
+
+				var weights = $(".weight").map(function () {
+					return String($(this).val());
+				}).get();
+				var companyname = $("#c_name").val();
+
+				var date = $('#datepicker').val();
+
+				var full_object = {
+					"from": from,
+					"vehicle": vehicle_number,
+					"to": to,
+					"challan": challan,
+					"weights": weights,
+					"price": price.val(),
+					"companyname": companyname,
+					"date": date
+
+				};
+
+				localStorage.setItem("billitems", JSON.stringify(full_object));
+				$("#gotogen")[0].click(); // going to the other page
+
+			});
+
+			//================datepicker=========
+			$(function () {
+				$("#datepicker").datepicker({
+					changeMonth: true,
+					changeYear: true,
+					setDate: new Date(),
+					dateFormat: "dd-mm-yy"
+				});
+
+			});
+			$("#datepicker").datepicker().datepicker("setDate", new Date());
+
+
+
+			// =========== for dynamically adding rows to table  =====================
+
+			function dothis() {
+
+				if (price.val() > 0) {
+					table_body.append($('<tr>')
+
+						.append($("<td>")
+							.append($("<button>")
+								.attr({
+									class: "delete",
+								})
+								.text("X")))
+
+						.append($('<td>')
+							.attr({
+								class: 'no',
+								id: counter
+							})
+							.text(counter)
+
+						)
+						.append($('<td>')
+							.append($('<input>')
+								.attr({
+									'class': 'from',
+									'size': 12
+								})
+								.val(from.val()))
+						)
+						.append($('<td>')
+							.append($('<input>')
+								.attr({
+									'class': 'vehicle_number',
+									'size': 12
+								})
+								.val(vh_name.val())
+							)
+						)
+						.append($('<td>')
+							.append($('<input>')
+								.attr({
+									'class': 'to',
+									'size': 12
+								})
+								.val(to.val())
+							)
+						)
+						.append($('<td>')
+							.append($('<input>')
+								.attr({
+									'class': 'challan',
+									'size': 8
+								})
+								.val(challan.val()))
+						)
+						.append($('<td>')
+							.append($('<input>')
+								.attr({
+									'class': 'weight',
+									'size': 6
+								})
+								.val(weight.val()))
+						)
+						.append($('<td>')
+							.attr('class', 'weight&price')
+							.text(weight.val() + '*' + price.val())
+						)
+						.append($('<td>')
+							.attr('class', 'total')
+							.text(weight.val() * price.val())
+						)
+					);
+
+					challan.val("");
+					weight.val("");
+					counter++;
+					challan.focus();
+				}
+				else {
+					alert("Price is not properly set");
+				}
+			}
+
+			//  ================ to delete row==================
+
+			$(document).on("click", "button.delete", function () {
+				$(this).parent().parent().remove();
+				reid();
+			})
+			// =========================for adjusting id and text of sr.no of row after deleting  row =============  
+			function reid() {
+				$(".no").each(function (index) {
+					$(this).attr("id", index + 1);
+					$(this).text(index + 1);
+					counter = index > 0 ? index + 2 : 1;
+				});
+			}
+
+
+
+		});
+
+
+
+
+	</script>
+
+</head>
+
+<body>
+
+	<table style="min-width: 40%;margin-left: 15%;border-collapse: collapse; margin: 2%; min-height: max-content; ">
+		<tr>
+			<td class="creator">Company name</td>
+			<td class="creator"><input type="text" id="c_name" placeholder="Company Name"></td>
+			<td class="creator">Vehicle Number</td>
+			<td class="creator"><input type="text" id="vh_name" placeholder="Vehicle NO." value=''></td>
+		</tr>
+		<tr>
+			<td class="creator">from</td>
+			<td class="creator"><input type="text" id="from_name" placeholder="From" value="hemani"></td>
+			<td class="creator">To</td>
+			<td class="creator"><input type="text" id="to_name" placeholder="To" value="padra"></td>
+		</tr>
+		<tr>
+			<td class="creator">Challan</td>
+			<td class="creator"><input type="text" id="challan_name" placeholder="Challan NO" value=""></td>
+			<td class="creator">Weights (in ton)</td>
+			<td class="creator"><input type="text" id="wt_name" placeholder="weight" size=6 value=""></td>
+		</tr>
+		<tr>
+			<td class="creator">price per ton</td>
+			<td class="creator"><input type="text" id="price_name" size=5 placeholder="Price" value=""></td>
+			<td class="creator">Date:</td>
+			<td class="creator"><input type="text" id="datepicker" size="7">
+
+				<script>
+					$(document).ready(function () {
+
+
+
+					})
+				</script>
+
+		</tr>
+		<tr>
+			<td>
+				<button id="add" style="margin: 5px; font-size: 16px;">Add</button>
+
+			</td>
+		</tr>
+	</table>
+	<hr>
+	<table
+		style="text-align: center; min-width: 70%;margin-left: 15%;border-collapse: collapse; margin: 2%; min-height: max-content; "
+		border="1">
+		<thead>
+			<tr>
+				<td>Del</td>
+				<td>NO.</td>
+				<td>From</td>
+				<td>VH no.</td>
+				<td>To</td>
+				<td>CH NO</td>
+				<td>Wt</td>
+				<td>Wt * price</td>
+				<td>Total</td>
+			</tr>
+		</thead>
+		<tbody id="bill_body">
+		</tbody>
+	</table>
+	<button id="send">submit</button>
+	<a href="./gen.html" id="gotogen">Go</a>
+
+
+</body>
+
+</html>

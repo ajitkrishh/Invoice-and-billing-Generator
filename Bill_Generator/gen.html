@@ -1,0 +1,165 @@
+<html>
+
+<head>
+    <script src='jquery.js'></script>
+    <style>
+        table,
+        TD,
+        TH {
+            border: 1px solid black;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" style="border: 1px solid; min-width: 90%;margin-left: 5%;margin-top: 3%; margin-right: 5%;">
+        <div>
+            <h5 style="float: left;margin-left: 1%">|| Shree Vishwakarma||</h5>
+            <h5 style="float: right;margin-right: 1%">||M. 9998982189||</h5>
+        </div>
+
+        <p style="text-align: center;font-size: 45px;">Krishna Motor Garage</p>
+
+        <table style="border: 1px solid black; margin-left: 5%;min-width: 90%;">
+            <tbody>
+                <tr>
+                    <td>Address</td>
+                    <td>33-Jay Narayan Complex, near Railway crossing, DAHEJ.</td>
+                </tr>
+                <tr>
+                    <td>
+                        Company Name
+                    </td>
+                    <td>
+                        <span id="company_name">company name</span>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <h3 style="text-align: center;">
+
+        </h3>
+        <div class="headtitle" style="margin-top: 2%;border: 1px ;">
+            <h4 style="float: left; border :1px solid black;margin-left: 1%;">
+                Pan No. AZVPS 2581E
+            </h4>
+            <h4 style="float: right;margin-right: 1%">
+                <label for="date">Date</label>: <span id="bill_date"></span>
+            </h4>
+        </div>
+        <div>
+            <table
+                style="text-align: center; min-width: 96%;margin-left: 2%;border-collapse: collapse; margin: 2%; min-height: max-content;">
+                <thead>
+                    <tr>
+                        <td>NO.</td>
+                        <td>From</td>
+                        <td>VH no.</td>
+                        <td>To</td>
+                        <td>CH NO</td>
+                        <td>Wt</td>
+                        <td>Wt * price</td>
+                        <td>Total</td>
+                    </tr>
+                </thead>
+                <tbody id="table_body">
+                </tbody>
+            </table>
+        </div>
+        <div class="final">
+            <div class="total" style="margin-left:75%;margin-bottom:5%; font-weight: 600;">
+                Total: <span id="bill_total"><u>99999.0</u> </span>
+
+            </div>
+            <div class="sign" style="margin-left:5%;margin-bottom:5%; font-weight: 600;">
+                Sign : _______________
+            </div>
+
+        </div>
+        <p id="xtra"></p>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            var billdata = localStorage.getItem("billitems");
+            var from = JSON.parse(billdata).from;
+            var vehicle = JSON.parse(billdata).vehicle;
+            var to = JSON.parse(billdata).to;
+            var challan = JSON.parse(billdata).challan;
+            var weights = JSON.parse(billdata).weights;
+            var price = JSON.parse(billdata).price;
+            var companyname = JSON.parse(billdata).companyname;
+            var totalbill = 0;
+            var bill_date = JSON.parse(billdata).date;
+
+            var table_body = $("#table_body");
+            for (let i = 0; i < from.length; i++) {
+                generatebill(i);
+            }
+
+            $("#bill_total").text(totalbill.toFixed(3)); // rounding of digits
+            $("#company_name").text(companyname);
+            $("#bill_date").text(bill_date);
+
+
+
+            function generatebill(i) {
+                var cash = (weights[i] * price).toFixed(3);
+                totalbill += parseFloat(cash);
+                table_body.append($('<tr>')
+                    .append($('<td>')
+                        .attr('class', 'no')
+                        .text(i + 1)
+
+                    )
+                    .append($('<td>')
+                        .attr('class', 'from')
+                        .text(from[i])
+                    )
+                    .append($('<td>')
+                        .attr('class', 'vehicle_number')
+                        .text(vehicle[i])
+
+                    )
+                    .append($('<td>')
+                        .attr('class', 'to')
+                        .text(to[i])
+                    )
+
+                    .append($('<td>')
+                        .attr('class', 'challan')
+                        .text(challan[i])
+                    )
+                    .append($('<td>')
+                        .attr('class', 'weight')
+                        .text(weights[i])
+                    )
+                    .append($('<td>')
+                        .attr('class', 'weight&price')
+                        .text(weights[i] + '*' + price)
+                    )
+                    .append($('<td>')
+                        .attr('class', 'total')
+                        .text((cash))
+                    )
+                );
+
+            }
+
+
+        });
+
+
+    </script>
+</body>
+
+</html>
